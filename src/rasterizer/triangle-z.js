@@ -1,6 +1,8 @@
 /**
- * Flat-shaded triangle rasterization (scanline) with z-buffer test.
+ * Flat-shaded triangle rasterization (scanline) — linear z-buffer.
  * Vertices are [x, y, z] where z is NDC depth (-1 = near, +1 = far).
+ * z is interpolated linearly in screen space (approximation).
+ * zBuffer must be initialised to Infinity; closer pixels have smaller z.
  */
 
 function fillTriangleFlatBottom(triangle, color, contextData, zBuffer) {
