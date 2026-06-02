@@ -1,5 +1,5 @@
-import * as Mat4 from "../math/mat4.js";
-import { drawGeneralTriangle } from "../rasterizer/triangle.js";
+import * as Mat4 from '../math/mat4.js';
+import { drawGeneralTriangle } from '../rasterizer/triangle.js';
 
 function hexToRgba(hex) {
   const n = parseInt(hex.slice(1), 16);
@@ -18,14 +18,16 @@ export function render(ctx, width, height, object3D, modelMatrix) {
     return [
       Math.round(((clip[0] / w) + 1) / 2 * width),
       Math.round((1 - (clip[1] / w)) / 2 * height),
+      clip[2] / w, // NDC z: -1 (near) to +1 (far)
     ];
   });
 
   const imageData = ctx.getImageData(0, 0, width, height);
+  const zBuffer = new Float32Array(width * height).fill(Infinity);
 
   for (const { vertexIndices, color } of object3D.polygons) {
-    const triangle = vertexIndices.map((i) => screenVerts[i]);
-    drawGeneralTriangle(triangle, hexToRgba(color), imageData);
+    const triangle = vertexIndices.map(i => screenVerts[i]);
+    drawGeneralTriangle(triangle, hexToRgba(color), imageData, zBuffer);
   }
 
   ctx.putImageData(imageData, 0, 0);

@@ -11,16 +11,25 @@ canvas.height = HEIGHT;
 
 const ctx = canvas.getContext('2d');
 
-// Place the cube 5 units in front of the camera, tilted so multiple faces are visible.
-const modelMatrix = Mat4.multiply(
-  Mat4.translation(0, 0, -5),
-  Mat4.multiply(
-    Mat4.rotationX(Math.PI / 6),  // 30° tilt down
-    Mat4.rotationY(Math.PI / 4),  // 45° turn
-  ),
-);
+const TILT_X = Math.PI / 6; // 30° fixed tilt so we see the top face
 
-ctx.fillStyle = '#111';
-ctx.fillRect(0, 0, WIDTH, HEIGHT);
+function frame(timestamp) {
+  const angle = (timestamp / 1000) * Math.PI * 0.5; // half rotation per second
 
-render(ctx, WIDTH, HEIGHT, cubeData, modelMatrix);
+  const modelMatrix = Mat4.multiply(
+    Mat4.translation(0, 0, -5),
+    Mat4.multiply(
+      Mat4.rotationX(TILT_X),
+      Mat4.rotationY(angle),
+    ),
+  );
+
+  ctx.fillStyle = '#111';
+  ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+  render(ctx, WIDTH, HEIGHT, cubeData, modelMatrix);
+
+  requestAnimationFrame(frame);
+}
+
+requestAnimationFrame(frame);
